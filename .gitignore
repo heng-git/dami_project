@@ -1,0 +1,14 @@
+# 忽略编译输出和二进制文件
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 忽略依赖包和临时文件
+vendor/
+tmp/
+*.log
+
+# 忽略视频 pdf
+*.itying
+*.pdf
