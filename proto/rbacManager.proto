@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package manager;
+
+option go_package = "./proto/rbacManager";
+
+service RbacManager {
+	rpc ManagerGet(ManagerGetRequest) returns (ManagerGetResponse) {}
+	rpc ManagerAdd(ManagerAddRequest) returns (ManagerAddResponse) {}
+	rpc ManagerEdit(ManagerEditRequest) returns (ManagerEditResponse) {}
+	rpc ManagerDelete(ManagerDeleteRequest) returns (ManagerDeleteResponse) {}
+}
+//管理员对应的结构体
+message ManagerModel{
+	int64 id=1;
+	string username=2;
+	string password=3;
+	string mobile=4;
+	string email=5;
+	int64 status =6;
+	int64 roleId=7;
+	int64 addTime=8;
+	int64 isSuper=9;
+	RoleModel role=10;
+}
+//角色对应的结构体
+message RoleModel{
+	int64 id=1;
+	string title=2;
+	string description=3;
+	int64 status=4;
+	int64 addTime =5;
+}
+
+message ManagerGetRequest{
+	int64 id =1;
+	string username =2;
+}
+message ManagerGetResponse{
+	repeated ManagerModel ManagerList=1;
+}
+
+message ManagerAddRequest{
+	string username=1;
+	string password=2;
+	string mobile=3;
+	string email=4;
+	int64 status =5;
+	int64 roleId=6;
+	int64 addTime=7;
+	int64 isSuper=8;	
+}
+
+message ManagerAddResponse{
+	bool success=1;
+	string message=2;
+}
+
+message ManagerEditRequest{
+	int64 id=1;
+	string username=2;
+	string password=3;
+	string mobile=4;
+	string email=5;
+	int64 status =6;
+	int64 roleId=7;
+	int64 addTime=8;
+	int64 isSuper=9;
+}
+message ManagerEditResponse{
+	bool success=1;
+	string message=2;
+}
+
+message ManagerDeleteRequest{
+	int64 id=1;
+}
+message ManagerDeleteResponse{
+	bool success=1;
+	string message=2;
+}

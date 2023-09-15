@@ -11,6 +11,7 @@ import (
 	"gopkg.in/ini.v1"
 	"html/template"
 	"io"
+	"math/rand"
 	"mime/multipart"
 	"os"
 	"path"
@@ -254,6 +255,23 @@ func Sub(a int, b int) int {
 	return a - b
 }
 
+//生成随机数
+
+func GetRandomNum() string {
+	var str string
+
+	for i := 0; i < 4; i++ {
+		current := rand.Intn(10)
+
+		str += String(current)
+	}
+	return str
+}
+
+func Mul(price float64, num int) float64 {
+	return price * float64(num)
+}
+
 // Substr截取字符串
 func Substr(str string, start int, end int) string {
 	rs := []rune(str)
@@ -296,7 +314,7 @@ str就是markdown语法
 */
 
 func FormatAttr(str string) string {
-	fmt.Println(str)
+	//fmt.Println(str)
 	tempSlice := strings.Split(str, "&") //将字符串用&分开  按行进行解析
 	var tempStr string
 	for _, v := range tempSlice {
@@ -304,6 +322,12 @@ func FormatAttr(str string) string {
 		output := markdown.ToHTML(md, nil, nil)
 		tempStr += string(output)
 	}
-	fmt.Println(tempStr)
+	//fmt.Println(tempStr)
 	return tempStr
+}
+
+func GetOrderId() string {
+	// 2022020312233
+	template := "20060102150405"
+	return time.Now().Format(template) + GetRandomNum()
 }

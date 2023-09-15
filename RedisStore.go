@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"ginshop02/models"
+	"xiaomi_project/models"
+
 	"time"
 )
 

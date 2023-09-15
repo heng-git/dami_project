@@ -139,13 +139,13 @@ CREATE TABLE `nav`  (
 -- Records of nav
 -- ----------------------------
 INSERT INTO `nav` VALUES (1, '商会组织', '', 1, 1);
-INSERT INTO `nav` VALUES (2, '赣商人文', 'www.itying.com', 1, 1);
+INSERT INTO `nav` VALUES (2, '赣商人文', 'www.shopping.com', 1, 1);
 INSERT INTO `nav` VALUES (3, '商会动态', '', 1, 1);
 INSERT INTO `nav` VALUES (4, '会员企业', '', 0, 3);
 INSERT INTO `nav` VALUES (5, '商会服务', '', 0, 1);
 INSERT INTO `nav` VALUES (6, '青海风情', '', 1, 5);
 INSERT INTO `nav` VALUES (7, '商会简介', '', 1, 3);
-INSERT INTO `nav` VALUES (21, '联系我们', 'www.itying.com', 1, 10);
+INSERT INTO `nav` VALUES (21, '联系我们', 'www.shopping.com', 1, 10);
 
 -- ----------------------------
 -- Table structure for student
@@ -188,7 +188,7 @@ CREATE TABLE `user`  (
 -- ----------------------------
 INSERT INTO `user` VALUES (1, 'gorm', 34, 'gorm@qq.com', 1590374917);
 INSERT INTO `user` VALUES (2, '哈哈', 34, 'gorm@qq1.com', 1590374917);
-INSERT INTO `user` VALUES (6, 'itying gin grom', 0, 'aaa@qqq.com', 1630372124);
-INSERT INTO `user` VALUES (7, 'itying GORM', 22, '222@qq.con', 1630372165);
+INSERT INTO `user` VALUES (6, 'shopping gin grom', 0, 'aaa@qqq.com', 1630372124);
+INSERT INTO `user` VALUES (7, 'shopping GORM', 22, '222@qq.con', 1630372165);
 
 SET FOREIGN_KEY_CHECKS = 1;

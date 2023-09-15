@@ -1,4 +1,4 @@
-package itying
+package shopping
 
 import (
 	"math"
@@ -47,8 +47,10 @@ func (con ProductController) Category(c *gin.Context) {
 	//获取总数量
 	var count int64
 	models.DB.Where(where, tempSlice).Table("goods").Count(&count)
-
-	tpl := "itying/product/list.html"
+	tpl := "shopping/product/list.html"
+	if currentCate.Template != "" {
+		tpl = currentCate.Template
+	}
 	con.Render(c, tpl, gin.H{
 		"page":        page,
 		"goodsList":   goodsList,
@@ -106,20 +108,74 @@ func (con ProductController) Detail(c *gin.Context) {
 	goodsAttr := []models.GoodsAttr{}
 	models.DB.Where("goods_id=?", goods.Id).Find(&goodsAttr)
 
+	//8、获取更多属性
+
+	/*
+			颜色:红色,白色,黄色 | 尺寸:41,42,43
+
+			切片
+
+			[
+				{
+					Cate:"颜色",
+					List:[红色,白色,黄色]
+				},
+				{
+					Cate:"尺寸",
+					List:[41,42,43]
+				}
+			]
+
+
+		goodsAttrStrSlice[0]	尺寸:41,42,43
+
+				tempSlice[0]    尺寸
+
+				tempSlice[1]	41,42,43
+
+		goodsAttrStrSlice[1]	套餐:套餐1,套餐2
+
+	*/
+
+	// goodsAttrStr := "尺寸:41,42,43|套餐:套餐1,套餐2"
+	goodsAttrStr := goods.GoodsAttr
+	goodsAttrStr = strings.ReplaceAll(goodsAttrStr, "，", ",")
+	goodsAttrStr = strings.ReplaceAll(goodsAttrStr, "：", ":")
+
+	var goodsItemAttrList []models.GoodsItemAttr
+	if strings.Contains(goodsAttrStr, ":") {
+		goodsAttrStrSlice := strings.Split(goodsAttrStr, "|") //以竖杠切分字符串
+		//创建切片的存储空间
+		goodsItemAttrList = make([]models.GoodsItemAttr, len(goodsAttrStrSlice))
+		for i := 0; i < len(goodsAttrStrSlice); i++ {
+			tempSlice := strings.Split(goodsAttrStrSlice[i], ":")
+			goodsItemAttrList[i].Cate = tempSlice[0]
+			listSlice := strings.Split(tempSlice[1], ",")
+			goodsItemAttrList[i].List = listSlice
+		}
+	}
+	//
+	//c.JSON(200, gin.H{
+	//	"goodsItemAttrList": goodsItemAttrList,
+	//})
+
 	// c.String(200, "Detail")
-	tpl := "itying/product/detail.html"
+
+	// c.String(200, "Detail")
+	tpl := "shopping/product/detail.html"
 	//fmt.Println("111111")
 	//fmt.Println(goods.GoodsColor)
 	//fmt.Println(colorIds )
-
+	//
 	con.Render(c, tpl, gin.H{
-		"goods":         goods,
-		"relationGoods": relationGoods,
-		"goodsGift":     goodsGift,
-		"goodsColor":    goodsColor,
-		"goodsFitting":  goodsFitting,
-		"goodsImage":    goodsImage,
-		"goodsAttr":     goodsAttr,
+		"goods":             goods,
+		"relationGoods":     relationGoods,
+		"goodsGift":         goodsGift,
+		"goodsColor":        goodsColor,
+		"goodsFitting":      goodsFitting,
+		"goodsImage":        goodsImage,
+		"goodsAttr":         goodsAttr,
+		"goodsItemAttrList": goodsItemAttrList,
 	})
 }
 

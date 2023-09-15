@@ -1,11 +1,13 @@
 package admin
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"xiaomi_project/models"
 
 	"github.com/gin-gonic/gin"
+	pbAccess "xiaomi_project/proto/rbacAccess"
 )
 
 type AccessController struct {
@@ -13,21 +15,27 @@ type AccessController struct {
 }
 
 func (con AccessController) Index(c *gin.Context) {
-	accessList := []models.Access{}
-	models.DB.Where("module_id=?", 0).Preload("AccessItem").Find(&accessList)
+	//accessList := []models.Access{}
+	//models.DB.Where("module_id=?", 0).Preload("AccessItem").Find(&accessList)
 
+	rbacClient := pbAccess.NewRbacAccessService("rbac", models.RbacClient)
+	res, _ := rbacClient.AccessGet(context.Background(), &pbAccess.AccessGetRequest{})
 	//fmt.Printf("%#v", accessList)
 	c.HTML(http.StatusOK, "admin/access/index.html", gin.H{
-		"accessList": accessList,
+		"accessList": res.AccessList,
 	})
 
 }
 func (con AccessController) Add(c *gin.Context) {
 	//获取顶级模块
-	accessList := []models.Access{}
-	models.DB.Where("module_id=?", 0).Find(&accessList)
+	//accessList := []models.Access{}
+	//models.DB.Where("module_id=?", 0).Find(&accessList)
+	//获取顶级模块
+	rbacClient := pbAccess.NewRbacAccessService("rbac", models.RbacClient)
+	res, _ := rbacClient.AccessGet(context.Background(), &pbAccess.AccessGetRequest{})
+
 	c.HTML(http.StatusOK, "admin/access/add.html", gin.H{
-		"accessList": accessList,
+		"accessList": res.AccessList,
 	})
 }
 func (con AccessController) DoAdd(c *gin.Context) {
@@ -48,18 +56,34 @@ func (con AccessController) DoAdd(c *gin.Context) {
 		return
 	}
 
-	access := models.Access{
+	//access := models.Access{
+	//	ModuleName:  moduleName,
+	//	Type:        accessType,
+	//	ActionName:  actionName,
+	//	Url:         url,
+	//	ModuleId:    moduleId,
+	//	Sort:        sort,
+	//	Description: description,
+	//	Status:      status,
+	//}
+	//err5 := models.DB.Create(&access).Error
+	//if err5 != nil {
+	//	con.Error(c, "增加数据失败", "/admin/access/add")
+	//	return
+	//}
+	rbacClient := pbAccess.NewRbacAccessService("rbac", models.RbacClient)
+	res, _ := rbacClient.AccessAdd(context.Background(), &pbAccess.AccessAddRequest{
 		ModuleName:  moduleName,
-		Type:        accessType,
+		Type:        int64(accessType),
 		ActionName:  actionName,
 		Url:         url,
-		ModuleId:    moduleId,
-		Sort:        sort,
+		ModuleId:    int64(moduleId),
+		Sort:        int64(sort),
 		Description: description,
-		Status:      status,
-	}
-	err5 := models.DB.Create(&access).Error
-	if err5 != nil {
+		Status:      int64(status),
+	})
+
+	if !res.Success {
 		con.Error(c, "增加数据失败", "/admin/access/add")
 		return
 	}
@@ -73,16 +97,25 @@ func (con AccessController) Edit(c *gin.Context) {
 	if err1 != nil {
 		con.Error(c, "参数错误", "/admin/access")
 	}
-	access := models.Access{Id: id}
-	models.DB.Find(&access)
+	//access := models.Access{Id: id}
+	//models.DB.Find(&access)
+	//
+	////获取顶级模块
+	//accessList := []models.Access{}
+	//models.DB.Where("module_id=?", 0).Find(&accessList)
+
+	//获取当前id对应的access
+	rbacClient := pbAccess.NewRbacAccessService("rbac", models.RbacClient)
+	access, _ := rbacClient.AccessGet(context.Background(), &pbAccess.AccessGetRequest{
+		Id: int64(id),
+	})
 
 	//获取顶级模块
-	accessList := []models.Access{}
-	models.DB.Where("module_id=?", 0).Find(&accessList)
+	resAccess, _ := rbacClient.AccessGet(context.Background(), &pbAccess.AccessGetRequest{})
 
 	c.HTML(http.StatusOK, "admin/access/edit.html", gin.H{
-		"access":     access,
-		"accessList": accessList,
+		"access":     access.AccessList[0],
+		"accessList": resAccess.AccessList,
 	})
 }
 
@@ -105,20 +138,38 @@ func (con AccessController) DoEdit(c *gin.Context) {
 		return
 	}
 
-	access := models.Access{Id: id}
-	models.DB.Find(&access)
-	access.ModuleName = moduleName
-	access.Type = accessType
-	access.ActionName = actionName
-	access.Url = url
-	access.ModuleId = moduleId
-	access.Sort = sort
-	access.Description = description
-	access.Status = status
+	//access := models.Access{Id: id}
+	//models.DB.Find(&access)
+	//access.ModuleName = moduleName
+	//access.Type = accessType
+	//access.ActionName = actionName
+	//access.Url = url
+	//access.ModuleId = moduleId
+	//access.Sort = sort
+	//access.Description = description
+	//access.Status = status
+	//
+	//err := models.DB.Save(&access).Error
+	//if err != nil {
+	//	con.Error(c, "修改数据", "/admin/access/edit?id="+models.String(id))
+	//} else {
+	//	con.Success(c, "修改数据成功", "/admin/access/edit?id="+models.String(id))
+	//}
+	rbacClient := pbAccess.NewRbacAccessService("rbac", models.RbacClient)
+	accessRes, _ := rbacClient.AccessEdit(context.Background(), &pbAccess.AccessEditRequest{
+		Id:          int64(id),
+		ModuleName:  moduleName,
+		Type:        int64(accessType),
+		ActionName:  actionName,
+		Url:         url,
+		ModuleId:    int64(moduleId),
+		Sort:        int64(sort),
+		Description: description,
+		Status:      int64(status),
+	})
 
-	err := models.DB.Save(&access).Error
-	if err != nil {
-		con.Error(c, "修改数据", "/admin/access/edit?id="+models.String(id))
+	if !accessRes.Success {
+		con.Error(c, "修改数据失败", "/admin/access/edit?id="+models.String(id))
 	} else {
 		con.Success(c, "修改数据成功", "/admin/access/edit?id="+models.String(id))
 	}
@@ -130,20 +181,30 @@ func (con AccessController) Delete(c *gin.Context) {
 	if err != nil {
 		con.Error(c, "传入数据错误", "/admin/access")
 	} else {
+		////获取我们要删除的数据
+		//access := models.Access{Id: id}
+		//models.DB.Find(&access)
+		//if access.ModuleId == 0 { //顶级模块
+		//	accessList := []models.Access{}
+		//	models.DB.Where("module_id = ?", access.Id).Find(&accessList)
+		//	if len(accessList) > 0 {
+		//		con.Error(c, "当前模块下面有菜单或者操作，请删除菜单或者操作以后再来删除这个数据", "/admin/access")
+		//	} else {
+		//		models.DB.Delete(&access)
+		//		con.Success(c, "删除数据成功", "/admin/access")
+		//	}
+		//} else { //操作 或者菜单
+		//	models.DB.Delete(&access)
+		//	con.Success(c, "删除数据成功", "/admin/access")
+		//}
 		//获取我们要删除的数据
-		access := models.Access{Id: id}
-		models.DB.Find(&access)
-		if access.ModuleId == 0 { //顶级模块
-			accessList := []models.Access{}
-			models.DB.Where("module_id = ?", access.Id).Find(&accessList)
-			if len(accessList) > 0 {
-				con.Error(c, "当前模块下面有菜单或者操作，请删除菜单或者操作以后再来删除这个数据", "/admin/access")
-			} else {
-				models.DB.Delete(&access)
-				con.Success(c, "删除数据成功", "/admin/access")
-			}
+		rbacClient := pbAccess.NewRbacAccessService("rbac", models.RbacClient)
+		accessRes, _ := rbacClient.AccessDelete(context.Background(), &pbAccess.AccessDeleteRequest{
+			Id: int64(id),
+		})
+		if !accessRes.Success { //顶级模块
+			con.Error(c, accessRes.Message, "/admin/access")
 		} else { //操作 或者菜单
-			models.DB.Delete(&access)
 			con.Success(c, "删除数据成功", "/admin/access")
 		}
 

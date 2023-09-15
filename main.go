@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"html/template"
 	"xiaomi_project/models"
 	"xiaomi_project/routers"
@@ -13,6 +14,8 @@ import (
 func main() {
 	// 创建一个默认的路由引擎
 	r := gin.Default()
+	//配置gin允许跨域请求
+	r.Use(cors.Default())
 	//自定义模板函数  注意要把这个函数放在加载模板前
 	r.SetFuncMap(template.FuncMap{ //这里只调用不执行
 		"UnixToTime": models.UnixToTime,
@@ -21,7 +24,9 @@ func main() {
 		"Sub":        models.Sub,
 		"Substr":     models.Substr,
 		"FormatAttr": models.FormatAttr,
+		"Mul":        models.Mul,
 	})
+
 	//加载并渲染templates文件夹下所有文件夹下的所有文件模板 放在配置路由前面
 	r.LoadHTMLGlob("templates/**/**/*")
 	//配置静态web目录   第一个参数表示路由, 第二个参数表示映射的目录

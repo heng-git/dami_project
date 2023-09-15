@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package access;
+
+option go_package = "./proto/rbacAccess";
+
+service RbacAccess {
+	rpc AccessGet(AccessGetRequest) returns (AccessGetResponse) {}
+	rpc AccessAdd(AccessAddRequest) returns (AccessAddResponse) {}
+	rpc AccessEdit(AccessEditRequest) returns (AccessEditResponse) {}
+	rpc AccessDelete(AccessDeleteRequest) returns (AccessDeleteResponse) {}
+}
+message AccessModel{
+	int64 id=1;	
+	string moduleName =2;
+	string actionName=3;
+	int64 type=4;    
+	string url=5; 
+	int64 moduleId=6;    
+	int64 sort =7;
+	string description=8;
+	int64 status=9;
+ 	int64 addTime=10;
+	repeated AccessModel accessItem=11;
+}
+
+message AccessGetRequest{
+	int64 id =1;
+}
+message AccessGetResponse{
+	repeated AccessModel accessList=1;
+}
+
+message AccessAddRequest{
+	string moduleName =1;
+	string actionName=2;
+	int64 type=3;   
+	string url=4; 
+	int64 moduleId=5;   
+	int64 sort =6;
+	string description=7;
+	int64 status=8;
+ 	int64 addTime=9;
+}
+message AccessAddResponse{
+	bool success=1;
+	string message=2;
+}
+
+message AccessEditRequest{
+	int64 id=1;
+	string moduleName =2;
+	string actionName=3;
+	int64 type=4;   
+	string url=5; 
+	int64 moduleId=6;   
+	int64 sort =7;
+	string description=8;
+	int64 status=9;
+ 	int64 addTime=10;
+}
+message AccessEditResponse{
+	bool success=1;
+	string message=2;
+}
+message AccessDeleteRequest{
+	int64 id=1;
+}
+message AccessDeleteResponse{
+	bool success=1;
+	string message=2;
+}
